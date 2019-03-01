@@ -1,4 +1,4 @@
-package com.spacex.heartbeat.server;
+package com.spacex.heartbeat.simple.server;
 
 import java.io.IOException;
 import java.io.InputStream;
