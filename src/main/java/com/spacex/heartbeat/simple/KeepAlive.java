@@ -1,4 +1,4 @@
-package com.spacex.heartbeat;
+package com.spacex.heartbeat.simple;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

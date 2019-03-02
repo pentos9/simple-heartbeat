@@ -1,6 +1,6 @@
-package com.spacex.heartbeat.client;
+package com.spacex.heartbeat.simple.client;
 
-import com.spacex.heartbeat.KeepAlive;
+import com.spacex.heartbeat.simple.KeepAlive;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +15,9 @@ public class Client {
     private int port;
     private Socket socket;
     private boolean running = false;
-    private long lastSendTime;
+    private long lastHeartbeatTimestamp;
+
+    private long heartBeatInterval = 2 * 1000;
 
     private ConcurrentHashMap<Class, ObjectAction> actionMapping = new ConcurrentHashMap<Class, ObjectAction>();
 
@@ -42,7 +44,7 @@ public class Client {
         try {
             socket = new Socket(serverIp, port);
             System.out.println(String.format("[Client]local address:%s,%s", serverIp, port));
-            lastSendTime = System.currentTimeMillis();
+            lastHeartbeatTimestamp = System.currentTimeMillis();
             running = true;
             new Thread(new KeepAliveWatchDog()).start();//保持长连接的线程，每隔2秒项，server发一个保持连接的心跳消息
             new Thread(new ReceiveWatchDog()).start();//接受消息的线程，处理消息
@@ -78,10 +80,10 @@ public class Client {
 
         public void run() {
             while (running) {
-                if (System.currentTimeMillis() - lastSendTime > keepAliveDelay) {
+                if (System.currentTimeMillis() - lastHeartbeatTimestamp > keepAliveDelay) {
                     Client.this.sendObject(new KeepAlive());
                     Client.this.stop();
-                    lastSendTime = System.currentTimeMillis();
+                    lastHeartbeatTimestamp = System.currentTimeMillis();
                 } else {
                     try {
                         Thread.sleep(checkDelay);
