@@ -1,9 +1,10 @@
 package com.spacex.heartbeat.rpc;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HeartbeatEntity {
+public class HeartbeatEntity implements Serializable {
     private long time;
     private String nodeId;
     private String error;
